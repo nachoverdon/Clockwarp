@@ -1,0 +1,2 @@
+# Ignorar los archivos ya exportados para ahorrar espacio
+JUEGO/export/*
