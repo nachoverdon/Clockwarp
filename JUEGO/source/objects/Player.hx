@@ -3,6 +3,7 @@ package objects;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.util.FlxColor;
 import utils.ActionFrame;
 
 class Player extends FlxSprite {
@@ -13,6 +14,7 @@ class Player extends FlxSprite {
   var gravity: Int = 700;
   var jump: Int = 200;
   var actionFrameCounter: Int = 0;
+  public var SEPARATE_BIAS = 10;
   public var actionFrames: Array<ActionFrame>;
   public var init_pos: FlxPoint;
   public var clonesAvailable: Int = 0;
@@ -25,7 +27,10 @@ class Player extends FlxSprite {
     init_pos = new FlxPoint(x, y);
     actionFrames = new Array<ActionFrame>();
 
-    if (isClone) isControllable = false;
+    if (isClone) {
+      isControllable = false;
+      makeGraphic(16, 16, FlxColor.GRAY);
+    }
 
     // Physic properties
     // Vertical gravity
@@ -36,6 +41,9 @@ class Player extends FlxSprite {
 
     // Max velocity
     maxVelocity.set(maxVelocityX, maxVelocityY);
+
+    // Solid object
+    solid = true;
 
     // loadGraphic(AssetsPaths.imagen__png, true, 32, 32);
   }
@@ -105,7 +113,7 @@ class Player extends FlxSprite {
       flipX = af.flipX;
 
       actionFrameCounter++;
-    }
+    } else resetActionFrames();
   }
 
   // Returns true if the are clones available

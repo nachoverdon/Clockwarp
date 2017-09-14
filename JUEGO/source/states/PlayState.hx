@@ -28,6 +28,7 @@ class PlayState extends FlxState
 	override public function update(elapsed: Float): Void {
 
 		// TODO: Add check canClone
+		// check if clone is last, so it doesn't keep track of action frames to save memory
 		// Move logic to Player if possible
 		if (FlxG.keys.justPressed.R) {
 			if (playerClones.countDead() > 0) {
@@ -42,12 +43,25 @@ class PlayState extends FlxState
 			}
 		}
 
+		// There's a bug in the collision system for object separation.
+		// Stacking objects will make them squeeze into one another.
+		// A workaround is to check for collisions multiple times.
+		// This is extremely unefficient, but works for now for at least 7 objects.
+		checkCollisions();
+		checkCollisions();
+		checkCollisions();
+		checkCollisions();
+		checkCollisions();
+		checkCollisions();
+
+		super.update(elapsed);
+	}
+
+	function checkCollisions() {
 		FlxG.collide(floor, player);
 		FlxG.collide(floor, playerClones);
 		FlxG.collide(player, playerClones);
 		FlxG.collide(playerClones, playerClones);
-
-		super.update(elapsed);
 	}
 
 	// Creates and spawns the player at the initial position.
@@ -71,6 +85,7 @@ class PlayState extends FlxState
 		floor = new FlxSprite(0, FlxG.height - 10);
 		floor.makeGraphic(FlxG.width, 10, FlxColor.RED);
 		floor.immovable = true;
+		floor.solid = true;
 		add(floor);
 	}
 
