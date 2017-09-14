@@ -12,13 +12,20 @@ class Player extends FlxSprite {
   var deceleration: Int = 3000;
   var gravity: Int = 700;
   var jump: Int = 200;
-  var actionFrames: Array<ActionFrame>;
-  var controllable: Bool = true;
-  var clonesAvailable: Int = 0;
-  public var isClone: Bool = false;
+  var actionFrameCounter: Int = 0;
+  public var actionFrames: Array<ActionFrame>;
+  public var init_pos: FlxPoint;
+  public var clonesAvailable: Int = 0;
+  public var isControllable: Bool = true;
+  public var isClone: Bool;
 
-  override public function new(x: Float, y: Float) {
+  override public function new(x: Float, y: Float, ?isClone: Bool = false) {
     super(x, y);
+    this.isClone = isClone;
+    init_pos = new FlxPoint(x, y);
+    actionFrames = new Array<ActionFrame>();
+
+    if (isClone) isControllable = false;
 
     // Physic properties
     // Vertical gravity
@@ -34,7 +41,12 @@ class Player extends FlxSprite {
   }
 
   override public function update(elapsed: Float) {
-    checkInputs();
+    if (isControllable) checkInputs();
+    if (isClone) {
+      updateActionFrame();
+      super.update(elapsed);
+      return;
+    }
     super.update(elapsed);
     addActionFrame();
   }
@@ -64,7 +76,6 @@ class Player extends FlxSprite {
   // These include info about the position, animation and orientation of the sprite on
   // past frames.
   function addActionFrame() {
-    //new ActionFrame(new FlxPoint(x, y), animation.name, animation.frameIndex, flipX)
     var af: ActionFrame = {
       position: new FlxPoint(x, y),
       animationName: animation.name,
@@ -73,6 +84,28 @@ class Player extends FlxSprite {
     };
 
     actionFrames.push(af);
+  }
+
+  // Reinitializes the action frames array
+  public function resetActionFrames() {
+    actionFrameCounter = 0;
+    actionFrames = new Array<ActionFrame>();
+  }
+
+  // Handles action frames done by clones by setting the properties of the player to
+  // the given settings by the actual action frame.
+  function updateActionFrame() {
+    if (actionFrameCounter < actionFrames.length) {
+      var af = actionFrames[actionFrameCounter];
+
+      x = af.position.x;
+      y = af.position.y;
+      animation.name = af.animationName;
+      animation.frameIndex = af.animationFrame;
+      flipX = af.flipX;
+
+      actionFrameCounter++;
+    }
   }
 
   // Returns true if the are clones available
