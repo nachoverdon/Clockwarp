@@ -32,9 +32,9 @@ class Player extends FlxSprite {
 
     if (isClone) isControllable = false;
 
-    setPhysicsProperties();
     // loadGraphic(AssetsPaths.imagen__png, true, 32, 32);
     createAnimations();
+    setPhysicsProperties();
   }
 
   override public function update(elapsed: Float) {
@@ -54,7 +54,12 @@ class Player extends FlxSprite {
   }
 
   // Sets some physic properties of the player
-  function setPhysicsProperties() {
+  public function setPhysicsProperties() {
+    // Adjust hitbox
+    offset.set(6, 0);
+    width = 20;
+    height = 32;
+
     // Vertical gravity
     acceleration.y = gravity;
 
@@ -165,6 +170,10 @@ class Player extends FlxSprite {
   */
   public function dies(): Bool {
     animation.play('dead');
+    offset.set(12, 0);
+    width = 32;
+    height = 20;
+    y += 12;
     if (canClone()) return false;
 
     alive = false;

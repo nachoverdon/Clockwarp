@@ -1,2 +1,3 @@
 # Ignorar los archivos ya exportados para ahorrar espacio
 JUEGO/export/*
+!JUEGO/export/windows/cpp/bin/*

@@ -13,6 +13,10 @@ class Button extends FlxSprite {
     animation.add('notPressed', [1], 1, false);
     animation.add('pressed', [0], 1, false);
     animation.play('notPressed');
+    // Adjust hitbox
+    offset.set(0, 26);
+    height = 6;
+    this.y += 26;
   }
 
   override public function update(elapsed: Float) {

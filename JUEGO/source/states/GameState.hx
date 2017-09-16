@@ -160,7 +160,7 @@ class GameState extends FlxState {
 				if (lastAF.animationName != 'dead') {
 					lastAF.animationName = 'stand';
 					lastAF.animationFrame = 0;
-				}
+				} else lastAF.animationName = 'dead';
 
 				clone.actionFrames[lastAFIndex] = lastAF;
 
@@ -169,6 +169,7 @@ class GameState extends FlxState {
 				player.kill();
 				// spawnPlayer();
 				player.reset(PLAYER_INIT_POS.x, PLAYER_INIT_POS.y);
+				player.setPhysicsProperties();
 				player.animation.play('stand');
 				player.clonesAvailable = cAvail;
 				player.clonesAvailable--;
