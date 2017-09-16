@@ -1,10 +1,15 @@
 # Ignorar los archivos ya exportados para ahorrar espacio
+!JUEGO/export/
 JUEGO/export/*
-!JUEGO/export/windows/cpp/*
-!JUEGO/export/windows/cpp/bin/*
-!JUEGO/export/windows/cpp/bin/assets/*
-!JUEGO/export/windows/cpp/bin/assets/data/*
-!JUEGO/export/windows/cpp/bin/assets/images/*
-!JUEGO/export/windows/cpp/bin/assets/music/*
-!JUEGO/export/windows/cpp/bin/assets/sounds/*
-!JUEGO/export/windows/cpp/bin/assets/tiled/*
+
+JUEGO/export/windows/*
+!JUEGO/export/windows/cpp/
+
+JUEGO/export/windows/cpp/*
+!JUEGO/export/windows/cpp/bin/
+
+#!JUEGO/export/windows/cpp/bin/assets/data/*
+#!JUEGO/export/windows/cpp/bin/assets/images/*
+#!JUEGO/export/windows/cpp/bin/assets/music/*
+#!JUEGO/export/windows/cpp/bin/assets/sounds/*
+#!JUEGO/export/windows/cpp/bin/assets/tiled/*
