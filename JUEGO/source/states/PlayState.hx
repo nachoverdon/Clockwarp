@@ -64,6 +64,7 @@ class PlayState extends FlxState
 		super.update(elapsed);
 	}
 
+	// Checks all the collisions
 	function checkCollisions() {
 		FlxG.collide(floor, player);
 		FlxG.collide(floor, playerClones);
