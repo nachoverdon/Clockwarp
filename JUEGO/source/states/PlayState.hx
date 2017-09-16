@@ -10,14 +10,14 @@ import objects.Player;
 
 class PlayState extends FlxState
 {
-	static var PLAYER_INIT_POS: FlxPoint;
+	var PLAYER_INIT_POS: FlxPoint;
 	var playerClones: FlxTypedSpriteGroup<Player>;
 	var player: Player;
 	var floor: FlxSprite;
 
 	override public function create(): Void {
 		super.create();
-		PLAYER_INIT_POS = new FlxPoint(50, FlxG.height - 32);
+		PLAYER_INIT_POS = new FlxPoint(50, FlxG.height - 64);
 		bgColor = FlxColor.fromString('#111111');
 
 		createPlayer();
@@ -26,15 +26,22 @@ class PlayState extends FlxState
 	}
 
 	override public function update(elapsed: Float): Void {
-
 		// TODO: Add check canClone
 		// check if clone is last, so it doesn't keep track of action frames to save memory
 		// Move logic to Player if possible
+		// if collidingBottom accel.y = 0 else accel.y = -gravity
 		if (FlxG.keys.justPressed.R) {
 			if (playerClones.countDead() > 0) {
 				var clone: Player = playerClones.getFirstDead();
 				// clone = new Player(player.init_pos.x, player.init_pos.y, true);
 				clone.actionFrames = player.actionFrames;
+				// Set the animation of the last action frame to idle to avoid awkardness
+				// unless the animation currently playing is 'dead'
+				var lastAF = clone.actionFrames[clone.actionFrames.length - 1];
+				if (lastAF.animationName != 'dead') {
+					lastAF.animationName = 'stand';
+					lastAF.animationFrame = 0;
+				}
 				clone.revive();
 				player.kill();
 				player.reset(PLAYER_INIT_POS.x, PLAYER_INIT_POS.y);

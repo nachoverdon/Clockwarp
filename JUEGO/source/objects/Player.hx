@@ -2,8 +2,10 @@ package objects;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.FlxObject;
 import flixel.math.FlxPoint;
-import flixel.util.FlxColor;
+// import flixel.util.FlxColor;
+import flixel.graphics.frames.FlxAtlasFrames;
 import utils.ActionFrame;
 
 class Player extends FlxSprite {
@@ -12,14 +14,15 @@ class Player extends FlxSprite {
   var accelX: Int = 2500;
   var deceleration: Int = 3000;
   var gravity: Int = 700;
-  var jump: Int = 200;
+  var jump: Int = 300;
   var actionFrameCounter: Int = 0;
-  public var SEPARATE_BIAS = 10;
+  // public var SEPARATE_BIAS = 10;
   public var actionFrames: Array<ActionFrame>;
   public var init_pos: FlxPoint;
   public var clonesAvailable: Int = 0;
   public var isControllable: Bool = true;
   public var isClone: Bool;
+  public var isLast: Bool = false;
 
   override public function new(x: Float, y: Float, ?isClone: Bool = false) {
     super(x, y);
@@ -27,12 +30,31 @@ class Player extends FlxSprite {
     init_pos = new FlxPoint(x, y);
     actionFrames = new Array<ActionFrame>();
 
+    if (isClone) isControllable = false;
+
+    setPhysicsProperties();
+    // loadGraphic(AssetsPaths.imagen__png, true, 32, 32);
+    createAnimations();
+  }
+
+  override public function update(elapsed: Float) {
     if (isClone) {
-      isControllable = false;
-      makeGraphic(16, 16, FlxColor.GRAY);
+      super.update(elapsed);
+      updateActionFrame();
+      return;
     }
 
-    // Physic properties
+    if (isControllable) {
+      checkInputs();
+      checkAnimations();
+      super.update(elapsed);
+      if (!isLast) addActionFrame();
+    }
+    checkCollisionFloor();
+  }
+
+  // Sets some physic properties of the player
+  function setPhysicsProperties() {
     // Vertical gravity
     acceleration.y = gravity;
 
@@ -44,19 +66,17 @@ class Player extends FlxSprite {
 
     // Solid object
     solid = true;
-
-    // loadGraphic(AssetsPaths.imagen__png, true, 32, 32);
   }
 
-  override public function update(elapsed: Float) {
-    if (isControllable) checkInputs();
-    if (isClone) {
-      updateActionFrame();
-      super.update(elapsed);
-      return;
-    }
-    super.update(elapsed);
-    addActionFrame();
+  // Creates all the animations
+  function createAnimations() {
+    frames = FlxAtlasFrames.fromSparrow('assets/images/player.png', 'assets/images/player.xml');
+    animation.add('stand', [0], 1, false);
+    animation.add('walk', [1, 2], 10, true);
+    animation.add('jump', [3], 1, false);
+    // animation.add('fall', [2], 1, false);
+    animation.add('dead', [4], 1, false);
+    animation.play('stand');
   }
 
   // Handles input and moves the player, jumps and all that stuff
@@ -76,8 +96,30 @@ class Player extends FlxSprite {
     else acceleration.x = 0;
 
     // Vertical movement
-    // TODO: Check if the player is on the floor
-    if (up) velocity.y = -jump;
+    if (up && isTouching(FlxObject.FLOOR)) velocity.y = -jump;
+  }
+
+  // Handles animations depending on state.
+  function checkAnimations() {
+    if (velocity.y < 0) animation.play('jump');
+    else if (velocity.y > 0) animation.play('stand');
+    else if (velocity.x == 0) animation.play('stand');
+    else if (velocity.x < 0 || velocity.x > 0) animation.play('walk');
+
+    if (velocity.x < 0) {
+      facing = FlxObject.LEFT;
+      flipX = true;
+    } else if (velocity.x > 0) {
+      facing = FlxObject.RIGHT;
+      flipX = false;
+    }
+  }
+
+  // Checks if the player is colliding with the bottom and disables it gravity if so.
+  function checkCollisionFloor() {
+    if (isTouching(FlxObject.FLOOR)) acceleration.y = 0;
+    else acceleration.y = gravity;
+    // trace(acceleration.y);
   }
 
   // Adds an action frame to the list of actionFrames.
@@ -114,8 +156,9 @@ class Player extends FlxSprite {
 
       actionFrameCounter++;
     } else resetActionFrames();
+    // } else actionFrames = null;
   }
 
   // Returns true if the are clones available
-  function canClone() return clonesAvailable > 0;
+  public function canClone() return clonesAvailable > 0;
 }
