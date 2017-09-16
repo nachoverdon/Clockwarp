@@ -159,6 +159,18 @@ class Player extends FlxSprite {
     // } else actionFrames = null;
   }
 
+  /**
+    Plays the dead animation and returns true if the player doesn't have clones availables
+    or false otherwise
+  */
+  public function dies(): Bool {
+    animation.play('dead');
+    if (canClone()) return false;
+
+    alive = false;
+    return true;
+  }
+
   // Returns true if the are clones available
   public function canClone() return clonesAvailable > 0;
 }

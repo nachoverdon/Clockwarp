@@ -9,8 +9,11 @@ class Platform extends FlxSprite {
   static var RIGHT: String = 'RIGHT';
   static var VERT: String = 'VERTICAL';
   static var HORI: String = 'HORIZONTAL';
-  static var accel: Int = 100;
+  static var vel: Int = 100;
   static var maxVel: Int = 50;
+  var init_x: Float;
+  var init_y: Float;
+  public var isActivated: Bool = false;
   public var id: Int;
   public var direction: String;
   public var type: String;
@@ -19,6 +22,8 @@ class Platform extends FlxSprite {
     super(x, y);
     this.id = id;
     this.direction = direction;
+    init_x = x;
+    init_y = y;
     // immovable = true;
     maxVelocity.set(maxVel, maxVel);
     handleType();
@@ -29,6 +34,7 @@ class Platform extends FlxSprite {
   override public function update(elapsed: Float) {
     super.update(elapsed);
     handleDirections();
+    if (isActivated) changeDirection();
   }
 
   function handleType() {
@@ -38,22 +44,30 @@ class Platform extends FlxSprite {
   // Rotates the platform 90 degrees if the platform is the vertical type
   // TODO: and adjusts the hitboxes
   function handleRotation() {
-    if (type == VERT) angle += 90;
+    if (type == VERT) {
+      x = init_x;
+      angle = 90;
+    } else if (type == HORI) {
+      y = init_y;
+      angle = 0;
+    }
   }
 
   // Changes platform acceleration and type depending on direction
   function handleDirections() {
-    acceleration.x = 0;
-    acceleration.y = 0;
+    // velocity.x = 0;
+    // velocity.y = 0;
+    // acceleration.x = 0;
+    // acceleration.y = 0;
 
-    if (direction == UP) acceleration.y = -accel;
-    else if (direction == DOWN) acceleration.y = accel;
-    else if (direction == LEFT) acceleration.x = -accel;
-    else if (direction == RIGHT) acceleration.x = accel;
+    if (direction == UP) velocity.y = -vel;
+    else if (direction == DOWN) velocity.y = vel;
+    else if (direction == LEFT) velocity.x = -vel;
+    else if (direction == RIGHT) velocity.x = vel;
   }
 
   // Changes the direction to its opposite
-  public function changeDirection(): Void {
+  function changeDirection(): Void {
     if (direction == UP) direction = DOWN;
     else if (direction == DOWN) direction = UP;
     else if (direction == LEFT) direction = RIGHT;

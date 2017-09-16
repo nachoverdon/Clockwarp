@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="40" height="18" tilewidth="32" tileheight="32" nextobjectid="80">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="right-down" width="40" height="18" tilewidth="32" tileheight="32" nextobjectid="81">
  <tileset firstgid="1" name="fondo" tilewidth="274" tileheight="300" tilecount="2" columns="0">
   <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
    <image width="64" height="64" source="rueda_dentada.png"/>
   </tile>
   <tile id="1">
-   <image width="274" height="300" source="Nubes.jpg"/>
+   <image width="274" height="300" source="Nubes.png"/>
   </tile>
  </tileset>
  <tileset firstgid="3" name="level" tilewidth="32" tileheight="32" tilecount="16" columns="4">
@@ -15,7 +15,7 @@
  <objectgroup draworder="index" name="images">
   <object id="51" gid="2" x="0" y="480" width="832" height="416">
    <properties>
-    <property name="depth" type="float" value="5"/>
+    <property name="depth" type="float" value="0.5"/>
    </properties>
   </object>
   <object id="49" gid="1" x="0" y="128" width="64" height="64">

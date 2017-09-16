@@ -10,8 +10,8 @@ class Button extends FlxSprite {
     super(x, y);
     this.id = id;
     loadGraphic('assets/images/button.png', true, 32, 32);
-    animation.add('notPressed', [0], 0, false);
-    animation.add('pressed', [1], 0, false);
+    animation.add('notPressed', [1], 1, false);
+    animation.add('pressed', [0], 1, false);
     animation.play('notPressed');
   }
 

@@ -113,6 +113,8 @@ class GameState extends FlxState {
 			}
 			FlxG.collide(playerAndClones, platforms);
 		}
+		// TODO:
+		// Collide only if clone.actionFrames is last
 		if (playerClones.countLiving() > 0) FlxG.collide(playerAndClones, playerAndClones);
 		// FlxG.collide(floor, player);
 		// FlxG.collide(floor, playerClones);
@@ -125,6 +127,11 @@ class GameState extends FlxState {
 		if (spikes.length > 0) FlxG.overlap(player, spikes, onSpiked);
 		// TODO: make all buttons changeDirection if not press
 		for (button in buttons) {
+			for (platform in platforms) {
+				if (button.id == platform.id) {
+					platform.isActivated = button.isPressed;
+				}
+			}
 			button.isPressed = false;
 		}
 		FlxG.overlap(playerAndClones, buttons, onPress);
@@ -135,11 +142,9 @@ class GameState extends FlxState {
 	// Checks if it's possible to clone the player and does it if so
 	// TODO: Move logic to Player if possible
 	function clonePlayer() {
-		if (playerClones.countDead() > 0 && player.canClone()) {
+		if (!player.canClone()) return;
+		if (playerClones.countDead() > 0) {
 				var clone: Player = playerClones.getFirstDead();
-				// Check if is the last available clone or if there's no more pickups on the map,
-				// so the player doesn't keep track of its action frames anymore to save memory.
-				if (playerClones.countDead() == 0 || allPickedUp()) player.isLast = true;
 
 				// clone = new Player(player.init_pos.x, player.init_pos.y, true);
 
@@ -148,40 +153,44 @@ class GameState extends FlxState {
 
 				// Set the animation of the last action frame to idle to avoid awkardness
 				// unless the animation currently playing is 'dead'
-				if (clone.actionFrames != null) {
-					var lastAFIndex = clone.actionFrames.length - 1;
-					var lastAF = clone.actionFrames[lastAFIndex];
+				// if (clone.actionFrames != null) {
+				var lastAFIndex = clone.actionFrames.length - 1;
+				var lastAF = clone.actionFrames[lastAFIndex];
 
-					if (lastAF.animationName != 'dead') {
-						lastAF.animationName = 'stand';
-						lastAF.animationFrame = 0;
-					}
-
-					// clone.actionFrames[lastAFIndex] = lastAF;
+				if (lastAF.animationName != 'dead') {
+					lastAF.animationName = 'stand';
+					lastAF.animationFrame = 0;
 				}
 
+				clone.actionFrames[lastAFIndex] = lastAF;
+
 				clone.revive();
+				var cAvail = player.clonesAvailable;
 				player.kill();
-				player.reset(PLAYER_INIT_POS.x, PLAYER_INIT_POS.y);
-				player.clonesAvailable--;
 				// spawnPlayer();
+				player.reset(PLAYER_INIT_POS.x, PLAYER_INIT_POS.y);
+				player.animation.play('stand');
+				player.clonesAvailable = cAvail;
+				player.clonesAvailable--;
+				// Check if is the last available clone or if there's no more pickups on the map,
+				// so the player doesn't keep track of its action frames anymore to save memory.
+				if (playerClones.countDead() == 0 || allPickedUp()) player.isLast = true;
 				// Creates a new array of action frames.
 				player.resetActionFrames();
 			}
 	}
 
 	// Automatically makes the player clone himself and reappear
+	// TODO: Make it work.
+	// Show [R]estart level text
 	function onSpiked(player: Player, spikes: Spikes) {
-		// TODO: Improve
-		player.animation.play('dead');
-		if (player.canClone()) {
-			clonePlayer();
-		} else {
-			// TODO:
-			// [R]estart level
+		if (!player.alive) return;
+		if (player.dies()) {
+			// Show [R]estart level text
 			player.isControllable = false;
 			haxe.Timer.delay(FlxG.resetState, 2000); //ms
-		}
+		} else clonePlayer();
+
 	}
 
 	// Makes the pickup disapear from screen and increases the amount of available clones
@@ -194,9 +203,10 @@ class GameState extends FlxState {
 	// Makes the button play the pressed animation and makes the platform associated to the
 	// buttons id move
 	function onPress(player: Player, button: Button) {
-		for (platform in platforms) {
-			if (platform.id == button.id) platform.changeDirection();
-		}
+		button.isPressed = true;
+		// for (platform in platforms) {
+		// 	if (platform.id == button.id && !platform.isActivated) platform.isActivated = true;
+		// }
 	}
 
 	// Gets to the next level or to the ending credits
