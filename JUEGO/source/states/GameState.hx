@@ -74,13 +74,13 @@ class GameState extends FlxState {
 		checkCollisions();
 		checkCollisions();
 
-		checkOverlaps();
 		checkPickedUp();
+		checkOverlaps();
 	}
 
 	// Creates and spawns the player at the initial position.
 	function createPlayer() {
-		spawnPlayer();
+		player = new Player(PLAYER_INIT_POS.x, PLAYER_INIT_POS.y);
 		FlxG.camera.follow(player);
 		add(player);
 	}
@@ -95,9 +95,6 @@ class GameState extends FlxState {
 		add(playerClones);
 	}
 
-	// Instantiates a Player and assigns it to player on the given position
-	function spawnPlayer() player = new Player(PLAYER_INIT_POS.x, PLAYER_INIT_POS.y);
-
 	// Checks for keyboard inputs
 	function checkInputs() {
 		if (FlxG.keys.justPressed.R) clonePlayer();
@@ -108,16 +105,18 @@ class GameState extends FlxState {
 		level.collideWithLevel(player);
 		level.collideWithLevel(playerClones);
 		if (platforms.length > 0) {
+			platforms.immovable = false;
 			for (plat in platforms) {
-				plat.immovable = false;
 				level.collideWithLevel(plat);
-				plat.immovable = true;
 			}
-			FlxG.collide(playerAndClones, platforms);
+			platforms.immovable = true;
+			FlxG.collide(player, platforms);
 		}
 		// TODO:
-		// Collide only if clone.actionFrames is last
-		if (playerClones.countLiving() > 0) FlxG.collide(playerAndClones, playerAndClones);
+		// Collide only if (clone.inLastFrame)
+		if (playerClones.countLiving() > 0) {
+			for (clone in playerClones) if (clone.inLastFrame) FlxG.collide(player, clone);
+		}
 		// FlxG.collide(floor, player);
 		// FlxG.collide(floor, playerClones);
 		// FlxG.collide(playerClones, playerClones);
@@ -128,14 +127,16 @@ class GameState extends FlxState {
 		//FlxTilemap.overlaps();
 		if (spikes.length > 0) FlxG.overlap(player, spikes, onSpiked);
 		// TODO: make all buttons changeDirection if not press
-		for (button in buttons) {
-			for (platform in platforms) {
-				if (button.id == platform.id) {
-					platform.isActivated = button.isPressed;
-				}
-			}
-			button.isPressed = false;
-		}
+		// for (button in buttons) {
+		// 	for (plat in platforms) {
+		// 		if (button.id == plat.id) {
+		// 			plat.isActivated = button.isPressed;
+		// 		}
+		// 	}
+		// 	button.isPressed = false;
+		// }
+		for (button in buttons) button.isPressed = false;
+		for (plat in platforms) plat.isActivated = false;
 		FlxG.overlap(playerAndClones, buttons, onPress);
 		if (!allPickedUp()) FlxG.overlap(playerAndClones, pickups, onPickup);
 		if (door.isOpen) FlxG.overlap(playerAndClones, door, onExit);
@@ -188,6 +189,8 @@ class GameState extends FlxState {
 	// Show [R]estart level text
 	function onSpiked(player: Player, spikes: Spikes) {
 		if (!player.alive) return;
+		if (player.animation.name == 'dead') return;
+
 		if (player.dies()) {
 			// Show [R]estart level text
 			player.isControllable = false;
@@ -201,19 +204,24 @@ class GameState extends FlxState {
 	function onPickup(player: Player, pickup: Pickup) {
 		pickup.kill();
 		player.clonesAvailable++;
+		pickedUp++;
 	}
 
 	// Makes the button play the pressed animation and makes the platform associated to the
 	// buttons id move
 	function onPress(player: Player, button: Button) {
 		button.isPressed = true;
-		// for (platform in platforms) {
-		// 	if (platform.id == button.id && !platform.isActivated) platform.isActivated = true;
-		// }
+		for (but in buttons) {
+			for (plat in platforms) {
+				if (but != button) but.isPressed = false;
+				if (plat.id == button.id) plat.isActivated = true;
+			}
+		}
 	}
 
 	// Gets to the next level or to the ending credits
 	function onExit(player: Player, door: Door) {
+		FlxG.switchState(new CreditsState());
 		// levels++
 		// if (levelLists.length == level) state = credits
 	}

@@ -11,6 +11,7 @@ class Platform extends FlxSprite {
   static var HORI: String = 'HORIZONTAL';
   static var vel: Int = 100;
   static var maxVel: Int = 50;
+  var init_dir: String;
   var init_x: Float;
   var init_y: Float;
   public var isActivated: Bool = false;
@@ -24,8 +25,9 @@ class Platform extends FlxSprite {
     this.direction = direction;
     init_x = x;
     init_y = y;
+    init_dir = direction;
     // immovable = true;
-    mass = 2;
+    // mass = 2;
     maxVelocity.set(maxVel, maxVel);
     loadGraphic('assets/images/platform.png', true, 64, 32);
     handleType();
@@ -35,6 +37,7 @@ class Platform extends FlxSprite {
   override public function update(elapsed: Float) {
     super.update(elapsed);
     handleDirections();
+    direction = init_dir;
     if (isActivated) changeDirection();
   }
 

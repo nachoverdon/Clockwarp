@@ -13,7 +13,7 @@ class Player extends FlxSprite {
   var maxVelocityY: Int = 250;
   var accelX: Int = 2500;
   var deceleration: Int = 3000;
-  var gravity: Int = 700;
+  var gravity: Int = 750;
   var jump: Int = 300;
   var actionFrameCounter: Int = 0;
   // public var SEPARATE_BIAS = 10;
@@ -23,6 +23,7 @@ class Player extends FlxSprite {
   public var isControllable: Bool = true;
   public var isClone: Bool;
   public var isLast: Bool = false;
+  public var inLastFrame: Bool = false;
 
   override public function new(x: Float, y: Float, ?isClone: Bool = false) {
     super(x, y);
@@ -46,7 +47,7 @@ class Player extends FlxSprite {
 
     if (isControllable) {
       checkInputs();
-      checkAnimations();
+      if (alive) checkAnimations();
       super.update(elapsed);
       if (!isLast) addActionFrame();
     }
@@ -75,7 +76,9 @@ class Player extends FlxSprite {
 
   // Creates all the animations
   function createAnimations() {
-    frames = FlxAtlasFrames.fromSparrow('assets/images/player.png', 'assets/images/player.xml');
+    var cloneFile = '';
+    if (isClone) cloneFile = '_clone';
+    frames = FlxAtlasFrames.fromSparrow('assets/images/player$cloneFile.png', 'assets/images/player.xml');
     animation.add('stand', [0], 1, false);
     animation.add('walk', [1, 2], 10, true);
     animation.add('jump', [3], 1, false);
@@ -160,6 +163,7 @@ class Player extends FlxSprite {
       flipX = af.flipX;
 
       actionFrameCounter++;
+      if (actionFrameCounter == actionFrames.length - 1) inLastFrame = true;
     } else resetActionFrames();
     // } else actionFrames = null;
   }
@@ -173,7 +177,7 @@ class Player extends FlxSprite {
     offset.set(12, 0);
     width = 32;
     height = 20;
-    y += 12;
+    // y += 12;
     if (canClone()) return false;
 
     alive = false;
