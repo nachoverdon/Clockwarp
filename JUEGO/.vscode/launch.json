@@ -5,32 +5,32 @@
 			"name": "Flash",
 			"type": "fdb",
 			"request": "launch",
-			"program": "${workspaceRoot}/export/flash/bin/Project_Clones.swf"
+			"program": "${workspaceRoot}/export/flash/bin/Clockwarp.swf"
 		},
 		{
 			"name": "Flash (+rebuild)",
 			"type": "fdb",
 			"request": "launch",
-			"program": "${workspaceRoot}/export/flash/bin/Project_Clones.swf",
+			"program": "${workspaceRoot}/export/flash/bin/Clockwarp.swf",
 			"preLaunchTask": "flash debug (build only)"
 		},
 		{
 			"name": "Windows",
 			"type": "hxcpp",
 			"request": "launch",
-			"program": "${workspaceRoot}/export/windows/cpp/bin/Project_Clones.exe"
+			"program": "${workspaceRoot}/export/windows/cpp/bin/Clockwarp.exe"
 		},
 		{
 			"name": "Linux",
 			"type": "hxcpp",
 			"request": "launch",
-			"program": "${workspaceRoot}/export/linux64/cpp/bin/Project_Clones"
+			"program": "${workspaceRoot}/export/linux64/cpp/bin/Clockwarp"
 		},
 		{
 			"name": "Mac",
 			"type": "hxcpp",
 			"request": "launch",
-			"program": "${workspaceRoot}/export/mac64/cpp/bin/Project_Clones.app/Contents/MacOS/Project_Clones"
+			"program": "${workspaceRoot}/export/mac64/cpp/bin/Clockwarp.app/Contents/MacOS/Clockwarp"
 		}
 	]
 }

@@ -115,7 +115,15 @@ class GameState extends FlxState {
 		// TODO:
 		// Collide only if (clone.inLastFrame)
 		if (playerClones.countLiving() > 0) {
-			for (clone in playerClones) if (clone.inLastFrame) FlxG.collide(player, clone);
+			for (clone in playerClones) {
+				if (clone.inLastFrame) {
+					clone.immovable = true;
+					clone.allowCollisions = 0x1100; // UP and DOWN only
+					FlxG.collide(player, clone);
+					clone.allowCollisions = 0x1111; // ANY
+					clone.immovable = false;
+				}
+			}
 		}
 		// FlxG.collide(floor, player);
 		// FlxG.collide(floor, playerClones);
@@ -125,7 +133,9 @@ class GameState extends FlxState {
 	// Checks overlaping of different objects
 	function checkOverlaps() {
 		//FlxTilemap.overlaps();
-		if (spikes.length > 0) FlxG.overlap(player, spikes, onSpiked);
+		if (spikes.length > 0) {
+			for (spk in spikes) FlxG.overlap(player, spk, onSpiked);
+		}
 		// TODO: make all buttons changeDirection if not press
 		// for (button in buttons) {
 		// 	for (plat in platforms) {

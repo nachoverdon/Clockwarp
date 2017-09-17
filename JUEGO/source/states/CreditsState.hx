@@ -22,6 +22,7 @@ class CreditsState extends FlxState {
       'Fin.\n\n$gameBy\n\n$collabBy\n\n$forGameJam',
       16
     );
+    text.alignment = CENTER;
     text.x -= Std.int(text.width / 2);
     text.y -= Std.int(text.height / 2);
     add(text);

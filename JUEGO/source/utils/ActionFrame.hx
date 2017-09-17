@@ -7,5 +7,4 @@ typedef ActionFrame = {
   var animationName: String;
   var animationFrame: Int;
   var flipX: Bool;
-  // hitbox
 }
