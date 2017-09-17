@@ -109,7 +109,9 @@ class GameState extends FlxState {
 		level.collideWithLevel(playerClones);
 		if (platforms.length > 0) {
 			for (plat in platforms) {
+				plat.immovable = false;
 				level.collideWithLevel(plat);
+				plat.immovable = true;
 			}
 			FlxG.collide(playerAndClones, platforms);
 		}

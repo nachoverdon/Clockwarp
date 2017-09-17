@@ -25,10 +25,11 @@ class Platform extends FlxSprite {
     init_x = x;
     init_y = y;
     // immovable = true;
+    mass = 2;
     maxVelocity.set(maxVel, maxVel);
+    loadGraphic('assets/images/platform.png', true, 64, 32);
     handleType();
     handleRotation();
-    loadGraphic('assets/images/platform.png', true, 64, 32);
   }
 
   override public function update(elapsed: Float) {
@@ -38,8 +39,8 @@ class Platform extends FlxSprite {
   }
 
   function handleType() {
-    if (direction == UP && direction == DOWN) type = VERT;
-    else if (direction == LEFT && direction == RIGHT) type = HORI;
+    if (direction == UP || direction == DOWN) type = VERT;
+    else if (direction == LEFT || direction == RIGHT) type = HORI;
   }
   // Rotates the platform 90 degrees if the platform is the vertical type
   // TODO: and adjusts the hitboxes
@@ -47,9 +48,15 @@ class Platform extends FlxSprite {
     if (type == VERT) {
       x = init_x;
       angle = 90;
+      offset.set(22, -16);
+      width = 18;
+      height = 64;
     } else if (type == HORI) {
       y = init_y;
       angle = 0;
+      offset.set(0, 7);
+      width = 64;
+      height = 18;
     }
   }
 
