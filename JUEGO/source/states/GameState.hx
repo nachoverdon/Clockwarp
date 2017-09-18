@@ -103,7 +103,7 @@ class GameState extends FlxState {
 	// Checks the collisions between different objects and/or group of objects
 	function checkCollisions() {
 		level.collideWithLevel(player);
-		level.collideWithLevel(playerClones);
+		for (clone in playerClones) if (clone.inLastFrame) level.collideWithLevel(clone);
 		if (platforms.length > 0) {
 			platforms.immovable = false;
 			for (plat in platforms) {
