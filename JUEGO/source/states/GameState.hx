@@ -119,7 +119,7 @@ class GameState extends FlxState {
 				if (clone.inLastFrame) {
 					clone.immovable = true;
 					clone.allowCollisions = 0x1100; // UP and DOWN only
-					FlxG.collide(player, clone);
+					FlxG.collide(playerClones, clone);
 					clone.allowCollisions = 0x1111; // ANY
 					clone.immovable = false;
 				}
